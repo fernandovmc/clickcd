@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model centrodistribuicao {
+  id              Int      @id @default(autoincrement())
+  nome            String   @db.VarChar(255)
+  localizacao     String   @db.VarChar(255)
+  metragem        Int
+  disponibilidade Boolean
+  createdat       DateTime @default(now()) @db.Timestamp(6)
+}
+
+model industria {
+  id                  Int      @id @default(autoincrement())
+  nome                String   @db.VarChar(255)
+  localizacao         String   @db.VarChar(255)
+  capacidade_producao Int
+  createdat           DateTime @default(now()) @db.Timestamp(6)
+}
+
+model pedidos {
+  id        Int      @id @default(autoincrement())
+  usuarioid Int
+  tipo      String   @db.VarChar(50)
+  status    String   @db.VarChar(50)
+  detalhes  String?
+  createdat DateTime @default(now()) @db.Timestamp(6)
+  usuarios  usuarios @relation(fields: [usuarioid], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model planos {
+  id        Int      @id @default(autoincrement())
+  nome      String   @db.VarChar(255)
+  recursos  String
+  preco     Decimal  @db.Decimal(10, 2)
+  createdat DateTime @default(now()) @db.Timestamp(6)
+}
+
+model transportadora {
+  id           Int      @id @default(autoincrement())
+  nome         String   @db.VarChar(255)
+  veiculos     Int
+  carga_maxima Int
+  localizacao  String   @db.VarChar(255)
+  createdat    DateTime @default(now()) @db.Timestamp(6)
+}
+
+model usuarios {
+  id           Int       @id @default(autoincrement())
+  nome         String    @db.VarChar(255)
+  email        String    @unique @db.VarChar(255)
+  senha        String    @db.VarChar(255)
+  tipo_usuario String    @db.VarChar(50)
+  plano        String    @db.VarChar(50)
+  whatsapp     String?   @db.VarChar(20)
+  createdat    DateTime  @default(now()) @db.Timestamp(6)
+  pedidos      pedidos[]
+}
